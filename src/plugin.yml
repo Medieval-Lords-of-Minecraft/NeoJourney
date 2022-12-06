@@ -1,0 +1,10 @@
+name: NeoJourney
+main: me.neoblade298.neojourney.Journey
+author: [Neoblade298]
+depend: [NeoCore]
+version: 1.0
+api-version: 1.16
+commands:
+   njourney:
+      description: Main command
+      usage: /njourney
