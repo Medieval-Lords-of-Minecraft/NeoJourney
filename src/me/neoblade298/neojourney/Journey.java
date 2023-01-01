@@ -4,9 +4,11 @@ import java.io.File;
 import java.util.HashSet;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -23,6 +25,10 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.songoda.epichoppers.EpicHoppers;
+import com.songoda.epichoppers.api.events.HopperPlaceEvent;
+import com.songoda.epichoppers.hopper.Hopper;
+import com.songoda.epichoppers.hopper.HopperBuilder;
 
 import de.tr7zw.nbtapi.NBTItem;
 import me.neoblade298.neocore.NeoCore;
@@ -50,7 +56,6 @@ public class Journey extends JavaPlugin implements org.bukkit.event.Listener {
 				}
 			});
 		} catch (NeoIOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -104,6 +109,20 @@ public class Journey extends JavaPlugin implements org.bukkit.event.Listener {
 			PersistentDataContainer data = new CustomBlockData(b, this);
 			data.set(stationKey, PersistentDataType.STRING, id);
 			Bukkit.getLogger().info("[NeoJourney] Created station " + id + " at " + Util.locToString(b.getLocation(), true, false));
+		}
+		
+		// Temporary epichoppers fix
+		if (item.getType() == Material.HOPPER && nbti.hasKey("level")) {
+			Player p = e.getPlayer();
+			EpicHoppers inst = EpicHoppers.getInstance();
+		    Hopper hopper = inst.getHopperManager().addHopper((new HopperBuilder(e
+		          .getBlock()))
+		        .setLevel(inst.getLevelManager().getLevel(item))
+		        .setPlacedBy(p)
+		        .setLastPlayerOpened(p).build());
+		    HopperPlaceEvent hopperPlaceEvent = new HopperPlaceEvent(p, hopper);
+		    Bukkit.getPluginManager().callEvent((Event)hopperPlaceEvent);
+		    EpicHoppers.getInstance().getDataManager().createHopper(hopper);
 		}
 	}
 	
