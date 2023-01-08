@@ -2,6 +2,7 @@ package me.neoblade298.neojourney;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,6 +21,8 @@ import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,6 +43,7 @@ import net.Indyuce.mmoitems.gui.CraftingStationView;
 
 public class Journey extends JavaPlugin implements org.bukkit.event.Listener {
 	private HashSet<String> craftingStations = new HashSet<String>();
+	private HashSet<UUID> donatorWarnings = new HashSet<UUID>();
 	private NamespacedKey stationKey = new NamespacedKey(this, "crafting-station");
 
 	public void onEnable() {
@@ -144,4 +148,24 @@ public class Journey extends JavaPlugin implements org.bukkit.event.Listener {
         view.open();
         e.setCancelled(true);
     }
+
+	@EventHandler(ignoreCancelled = true)
+	public void onDurabilityLoss(PlayerItemDamageEvent e) {
+		ItemMeta meta = e.getItem().getItemMeta();
+		if (meta instanceof Damageable) {
+			Player p = e.getPlayer();
+			UUID uuid = p.getUniqueId();
+			Damageable dm = (Damageable) meta;
+			int max = e.getItem().getType().getMaxDurability();
+			if (max - dm.getDamage() <= 25 && p.hasPermission("donator.warndurability")) {
+				Util.msg(p, "&4WARNING: Your item, " + meta.getDisplayName() + "&4, is below 25 durability!");
+				donatorWarnings.add(uuid);
+				new BukkitRunnable() {
+					public void run() {
+						donatorWarnings.remove(uuid);
+					}
+				}.runTaskLater(this, 200L);
+			}
+		}
+	}
 }
