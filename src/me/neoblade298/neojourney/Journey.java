@@ -2,14 +2,11 @@ package me.neoblade298.neojourney;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -28,11 +25,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.songoda.epichoppers.EpicHoppers;
-import com.songoda.epichoppers.api.events.HopperPlaceEvent;
-import com.songoda.epichoppers.hopper.Hopper;
-import com.songoda.epichoppers.hopper.HopperBuilder;
-
 import de.tr7zw.nbtapi.NBTItem;
 import me.neoblade298.neocore.NeoCore;
 import me.neoblade298.neocore.blockdata.CustomBlockData;
@@ -43,13 +35,15 @@ import net.Indyuce.mmoitems.gui.CraftingStationView;
 
 public class Journey extends JavaPlugin implements org.bukkit.event.Listener {
 	private HashSet<String> craftingStations = new HashSet<String>();
-	private HashSet<UUID> donatorWarnings = new HashSet<UUID>();
+	private static final int DURABILITY_LIMIT = 50;
 	private NamespacedKey stationKey = new NamespacedKey(this, "crafting-station");
 
 	public void onEnable() {
 		Bukkit.getServer().getLogger().info("NeoJourney Enabled");
 		getServer().getPluginManager().registerEvents(this, this);
 		getServer().getPluginManager().registerEvents(new QuestGearListener(), this);
+		if (Bukkit.getPluginManager().isPluginEnabled("EpicHoppers"))
+			getServer().getPluginManager().registerEvents(new EpicHoppersListener(), this);
 		// this.getCommand("njourney").setExecutor(new Commands(this));
 		CustomBlockData.registerListener(this);
 		
@@ -114,20 +108,6 @@ public class Journey extends JavaPlugin implements org.bukkit.event.Listener {
 			data.set(stationKey, PersistentDataType.STRING, id);
 			Bukkit.getLogger().info("[NeoJourney] Created station " + id + " at " + Util.locToString(b.getLocation(), true, false));
 		}
-		
-		// Temporary epichoppers fix
-		if (item.getType() == Material.HOPPER && nbti.hasKey("level")) {
-			Player p = e.getPlayer();
-			EpicHoppers inst = EpicHoppers.getInstance();
-		    Hopper hopper = inst.getHopperManager().addHopper((new HopperBuilder(e
-		          .getBlock()))
-		        .setLevel(inst.getLevelManager().getLevel(item))
-		        .setPlacedBy(p)
-		        .setLastPlayerOpened(p).build());
-		    HopperPlaceEvent hopperPlaceEvent = new HopperPlaceEvent(p, hopper);
-		    Bukkit.getPluginManager().callEvent((Event)hopperPlaceEvent);
-		    EpicHoppers.getInstance().getDataManager().createHopper(hopper);
-		}
 	}
 	
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -151,20 +131,18 @@ public class Journey extends JavaPlugin implements org.bukkit.event.Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onDurabilityLoss(PlayerItemDamageEvent e) {
-		ItemMeta meta = e.getItem().getItemMeta();
+		ItemStack item = e.getItem();
+		ItemMeta meta = item.getItemMeta();
 		if (meta instanceof Damageable) {
 			Player p = e.getPlayer();
-			UUID uuid = p.getUniqueId();
 			Damageable dm = (Damageable) meta;
-			int max = e.getItem().getType().getMaxDurability();
-			if (max - dm.getDamage() <= 25 && p.hasPermission("donator.warndurability")) {
-				Util.msg(p, "&4WARNING: Your item, " + meta.getDisplayName() + "&4, is below 25 durability!");
-				donatorWarnings.add(uuid);
-				new BukkitRunnable() {
-					public void run() {
-						donatorWarnings.remove(uuid);
-					}
-				}.runTaskLater(this, 200L);
+			
+			int max = item.getType().getMaxDurability();
+			int before = max - dm.getDamage();
+			int after = before - e.getDamage();
+			if (before > DURABILITY_LIMIT && after <= DURABILITY_LIMIT && p.hasPermission("donator.warndurability")) {
+				String display = meta.hasDisplayName() ? meta.getDisplayName() : item.getType().name();
+				Util.msg(p, "&4WARNING: Your item, " + display + "&4, is below 25 durability!");
 			}
 		}
 	}
