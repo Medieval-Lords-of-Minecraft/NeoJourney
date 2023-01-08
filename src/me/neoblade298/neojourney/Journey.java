@@ -142,7 +142,7 @@ public class Journey extends JavaPlugin implements org.bukkit.event.Listener {
 			int after = before - e.getDamage();
 			if (before > DURABILITY_LIMIT && after <= DURABILITY_LIMIT && p.hasPermission("donator.warndurability")) {
 				String display = meta.hasDisplayName() ? meta.getDisplayName() : item.getType().name();
-				Util.msg(p, "&4WARNING: Your item, " + display + "&4, is below 25 durability!");
+				Util.msg(p, "&4WARNING: Your item, " + display + "&4, is below " + DURABILITY_LIMIT + " durability!");
 			}
 		}
 	}
