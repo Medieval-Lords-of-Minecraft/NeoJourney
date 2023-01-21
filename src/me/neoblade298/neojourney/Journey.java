@@ -26,9 +26,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tr7zw.nbtapi.NBTItem;
-import me.neoblade298.neocore.NeoCore;
-import me.neoblade298.neocore.blockdata.CustomBlockData;
-import me.neoblade298.neocore.exceptions.NeoIOException;
+import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.blockdata.CustomBlockData;
+import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.util.Util;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.gui.CraftingStationView;
@@ -43,7 +43,6 @@ public class Journey extends JavaPlugin implements org.bukkit.event.Listener {
 		getServer().getPluginManager().registerEvents(this, this);
 		getServer().getPluginManager().registerEvents(new QuestGearListener(), this);
 		if (Bukkit.getPluginManager().isPluginEnabled("EpicHoppers"))
-			getServer().getPluginManager().registerEvents(new EpicHoppersListener(), this);
 		// this.getCommand("njourney").setExecutor(new Commands(this));
 		CustomBlockData.registerListener(this);
 		

@@ -4,8 +4,7 @@
 	<classpathentry kind="lib" path="src/spigot-api-1.16.4-R0.1-20201118.232026-23-shaded.jar"/>
 	<classpathentry kind="lib" path="src/me/neoblade298/neojourney/item-nbt-api-plugin-2.10.0.jar"/>
 	<classpathentry kind="lib" path="src/MMOItems-6.8.2.jar"/>
-	<classpathentry kind="lib" path="src/NeoCore.jar"/>
-	<classpathentry kind="lib" path="src/EpicHoppers-4.7.5.jar"/>
+	<classpathentry kind="lib" path="src/NeoCore-0.0.1-SNAPSHOT.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
