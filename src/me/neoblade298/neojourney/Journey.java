@@ -28,8 +28,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import de.tr7zw.nbtapi.NBTItem;
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.blockdata.CustomBlockData;
+import me.neoblade298.neocore.bukkit.util.BukkitUtil;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
-import me.neoblade298.neocore.util.Util;
+
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.gui.CraftingStationView;
 
@@ -105,7 +106,7 @@ public class Journey extends JavaPlugin implements org.bukkit.event.Listener {
 			Block b = e.getBlockPlaced();
 			PersistentDataContainer data = new CustomBlockData(b, this);
 			data.set(stationKey, PersistentDataType.STRING, id);
-			Bukkit.getLogger().info("[NeoJourney] Created station " + id + " at " + Util.locToString(b.getLocation(), true, false));
+			Bukkit.getLogger().info("[NeoJourney] Created station " + id + " at " + BukkitUtil.locToString(b.getLocation(), true, false));
 		}
 	}
 	
@@ -141,7 +142,7 @@ public class Journey extends JavaPlugin implements org.bukkit.event.Listener {
 			int after = before - e.getDamage();
 			if (before > DURABILITY_LIMIT && after <= DURABILITY_LIMIT && p.hasPermission("donator.warndurability")) {
 				String display = meta.hasDisplayName() ? meta.getDisplayName() : item.getType().name();
-				Util.msg(p, "&4WARNING: Your item, " + display + "&4, is below " + DURABILITY_LIMIT + " durability!");
+				BukkitUtil.msg(p, "&4WARNING: Your item, " + display + "&4, is below " + DURABILITY_LIMIT + " durability!");
 			}
 		}
 	}
