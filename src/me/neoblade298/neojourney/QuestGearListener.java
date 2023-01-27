@@ -27,7 +27,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.SmithingInventory;
 
 import de.tr7zw.nbtapi.NBTItem;
-import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.bukkit.util.Util;
 
 
 public class QuestGearListener implements Listener {
@@ -39,7 +39,7 @@ public class QuestGearListener implements Listener {
 		if (item != null) {
 			if (isQuestGear(item)) {
 				e.setCancelled(true);
-				BukkitUtil.msg(e.getEnchanter(), "&cYou cannot enchant RPG items!");
+				Util.msg(e.getEnchanter(), "&cYou cannot enchant RPG items!");
 				return;
 			}
 		}
