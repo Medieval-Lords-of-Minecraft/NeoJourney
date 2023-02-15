@@ -36,7 +36,7 @@ import net.Indyuce.mmoitems.gui.CraftingStationView;
 
 public class Journey extends JavaPlugin implements org.bukkit.event.Listener {
 	private HashSet<String> craftingStations = new HashSet<String>();
-	private static final int DURABILITY_LIMIT = 50;
+	private static final double DURABILITY_LIMIT_PCT = 0.1;
 	private NamespacedKey stationKey = new NamespacedKey(this, "crafting-station");
 
 	public void onEnable() {
@@ -140,9 +140,11 @@ public class Journey extends JavaPlugin implements org.bukkit.event.Listener {
 			int max = item.getType().getMaxDurability();
 			int before = max - dm.getDamage();
 			int after = before - e.getDamage();
-			if (before > DURABILITY_LIMIT && after <= DURABILITY_LIMIT && p.hasPermission("donator.warndurability")) {
+			double beforePct = before / max;
+			double afterPct = after / max;
+			if (beforePct > DURABILITY_LIMIT_PCT && afterPct <= DURABILITY_LIMIT_PCT && p.hasPermission("donator.warndurability")) {
 				String display = meta.hasDisplayName() ? meta.getDisplayName() : item.getType().name();
-				Util.msg(p, "&4WARNING: Your item, " + display + "&4, is below " + DURABILITY_LIMIT + " durability!");
+				Util.msg(p, "&4WARNING: Your item, " + display + "&4, is below " + ((int) (DURABILITY_LIMIT_PCT * 100)) + "% durability!");
 			}
 		}
 	}
