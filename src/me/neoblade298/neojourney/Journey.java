@@ -137,9 +137,9 @@ public class Journey extends JavaPlugin implements org.bukkit.event.Listener {
 			Player p = e.getPlayer();
 			Damageable dm = (Damageable) meta;
 			
-			int max = item.getType().getMaxDurability();
-			int before = max - dm.getDamage();
-			int after = before - e.getDamage();
+			double max = item.getType().getMaxDurability();
+			double before = max - dm.getDamage();
+			double after = before - e.getDamage();
 			double beforePct = before / max;
 			double afterPct = after / max;
 			if (beforePct > DURABILITY_LIMIT_PCT && afterPct <= DURABILITY_LIMIT_PCT && p.hasPermission("donator.warndurability")) {
